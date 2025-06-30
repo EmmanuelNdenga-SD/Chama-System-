@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import MemberLogin from './pages/MemberLogin';
+import MemberRegister from './pages/MemberRegister';
+import Contributions from './pages/Contributions';
 import Payments from './pages/Payments';
 import AddMember from './pages/AddMember';
 import Navbar from './components/Navbar';
@@ -32,16 +35,21 @@ const theme = createTheme({
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMemberAuthenticated, setMemberAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    const memberToken = localStorage.getItem('member_token');
     setIsAuthenticated(!!token);
+    setMemberAuthenticated(!!memberToken);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('member_token');
     setIsAuthenticated(false);
+    setMemberAuthenticated(false);
     navigate('/login');
   };
 
@@ -58,13 +66,29 @@ export default function App() {
         }}
       >
         {/* Navbar */}
-        <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+        <Navbar
+          isAuthenticated={isAuthenticated}
+          isMemberAuthenticated={isMemberAuthenticated}
+          onLogout={handleLogout}
+        />
 
         {/* Page Content */}
         <Box sx={{ flex: 1, px: 2, py: 4 }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+            <Route path="/member/login" element={<MemberLogin setMemberAuthenticated={setMemberAuthenticated} />} />
+            <Route path="/member/register" element={<MemberRegister />} />
+            <Route
+              path="/contributions"
+              element={
+                isMemberAuthenticated ? (
+                  <Contributions />
+                ) : (
+                  <MemberLogin setMemberAuthenticated={setMemberAuthenticated} />
+                )
+              }
+            />
             <Route
               path="/payments"
               element={isAuthenticated ? <Payments /> : <Login setIsAuthenticated={setIsAuthenticated} />}

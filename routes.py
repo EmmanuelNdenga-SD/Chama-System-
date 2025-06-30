@@ -71,3 +71,50 @@ def delete_member(member_id):
             }), 200
 
     return jsonify({"error": "Member not found"}), 404
+
+@bp.route('/members/register', methods=['POST'])
+def register_member():
+    global members, next_id
+
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
+
+    # Check for existing username
+    for member in members:
+        if member.get('username') == username:
+            return jsonify({"error": "Username already exists"}), 409
+
+    new_member = {
+        "id": next_id,
+        "username": username,
+        "password": password,  # Note: use hashing in production
+        "contributions": []
+    }
+    members.append(new_member)
+    next_id += 1
+
+    return jsonify({
+        "message": "Member registered successfully",
+        "member": {"id": new_member["id"], "username": new_member["username"]}
+    }), 201
+    
+@bp.route('/members/login', methods=['POST'])
+def login_member():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    for member in members:
+        if member.get('username') == username and member.get('password') == password:
+            return jsonify({
+                "message": "Login successful",
+                "access_token": f"mock-token-for-member-{member['id']}"
+            }), 200
+
+    return jsonify({"error": "Invalid username or password"}), 401
+
+
