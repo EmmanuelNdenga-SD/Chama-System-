@@ -38,7 +38,6 @@ chama-app/
  - flask db init
  - flask db migrate -m"initial migration"
  - flask upgrade head 
- - Python seed.py
  - flask run
 
  # How to run Frontend 
