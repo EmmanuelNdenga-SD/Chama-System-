@@ -15,14 +15,13 @@ export default function MemberRegister() {
   const handleSubmit = async e => {
     e.preventDefault();
 
-    // Check if passwords match
     if (form.password !== form.confirmPassword) {
       setMessage('Passwords do not match');
       return;
     }
 
     try {
-      const res = await fetch('https://your-render-backend-url/members/register', {
+      const res = await fetch('https://chama-system-5.onrender.com/members/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -34,6 +33,7 @@ export default function MemberRegister() {
       const data = await res.json();
       setMessage(res.ok ? 'Registration successful!' : data.error || 'Registration failed');
     } catch (error) {
+      console.error('Registration error:', error);
       setMessage('Server error. Please try again later.');
     }
   };
