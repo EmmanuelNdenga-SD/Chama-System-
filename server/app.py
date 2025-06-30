@@ -3,7 +3,7 @@ from flask_cors import CORS
 from routes import bp
 
 app = Flask(__name__)
-CORS(app)  # ✅ Enable CORS
+CORS(app)  
 
 app.register_blueprint(bp)
 
