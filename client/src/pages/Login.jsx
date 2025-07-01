@@ -21,7 +21,7 @@ export default function Login() {
      const res = await fetch('https://chama-system.onrender.com/api/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  credentials: 'include', // ✅ Required with cookies or JWT auth
+  credentials: 'include', // ✅ REQUIRED for CORS + JWT cookies
   body: JSON.stringify(form),
 });
       const data = await res.json();

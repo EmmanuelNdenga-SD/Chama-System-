@@ -218,3 +218,6 @@ def add_or_update_monthly_contribution(user_id):
     db.session.commit()
 
     return jsonify({'message': message}), 200
+@bp.route('/test-cors', methods=['GET', 'OPTIONS'])
+def test_cors():
+    return jsonify({"message": "CORS works!"}), 200

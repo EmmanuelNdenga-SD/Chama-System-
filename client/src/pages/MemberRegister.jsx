@@ -26,20 +26,20 @@ export default function MemberRegister() {
     }
 
     try {
-      const res = await fetch('https://chama-system.onrender.com/api/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  credentials: 'include', // ✅ Required with cookies or JWT auth
-  body: JSON.stringify({
-    username: form.username,
-    phone: form.phone,
-    password: form.password,
-    is_admin: false,
-  }),
-});
-
+      const res = await fetch('https://chama-system.onrender.com/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // ✅ Required for cookies or JWT auth
+        body: JSON.stringify({
+          username: form.username,
+          phone: form.phone,
+          password: form.password,
+          is_admin: false,
+        }),
+      });
 
       const data = await res.json();
+
       if (res.ok) {
         setMessage('✅ Registration successful!');
         setForm({
