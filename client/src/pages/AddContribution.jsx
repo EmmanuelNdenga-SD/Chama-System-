@@ -11,9 +11,15 @@ export default function AddContribution() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  // Fetch members
+  // Fetch members with Authorization
   useEffect(() => {
-    fetch('https://chama-system-5.onrender.com/api/members')
+    const token = localStorage.getItem('token');
+
+    fetch('https://chama-system-5.onrender.com/api/members', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    })
       .then(res => {
         if (!res.ok) throw new Error('Failed to load members');
         return res.json();
@@ -44,9 +50,14 @@ export default function AddContribution() {
     }
 
     try {
+      const token = localStorage.getItem('token');
+
       const res = await fetch(`https://chama-system-5.onrender.com/api/users/${form.userId}/contributions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify({ amount: form.amount }),
       });
 

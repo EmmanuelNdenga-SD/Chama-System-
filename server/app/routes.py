@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .models import db, User, Payment, Contribution
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -57,8 +58,11 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and check_password_hash(user.password, password):
+        access_token = create_access_token(identity=user.id)
+
         return jsonify({
             'message': 'Login successful',
+            'access_token': access_token,
             'user': {
                 'id': user.id,
                 'username': user.username,
@@ -73,7 +77,13 @@ def login():
 # Get All Members (Non-admin Users)
 # -------------------------
 @bp.route('/members', methods=['GET'])
+@jwt_required()
 def get_members():
+    current_user_id = get_jwt_identity()
+    current_user = User.query.get(current_user_id)
+    if not current_user or not current_user.is_admin:
+        return jsonify({'error': 'Unauthorized'}), 403
+
     members = User.query.filter_by(is_admin=False).all()
     members_list = [{
         'id': member.id,
@@ -87,14 +97,15 @@ def get_members():
 # Add Payment
 # -------------------------
 @bp.route('/users/<int:user_id>/payments', methods=['POST'])
+@jwt_required()
 def add_payment(user_id):
-    user = User.query.get_or_404(user_id)
     data = request.get_json()
     amount = data.get('amount')
 
     if not amount:
         return jsonify({'error': 'Amount is required'}), 400
 
+    user = User.query.get_or_404(user_id)
     payment = Payment(amount=amount, user=user)
     db.session.add(payment)
     db.session.commit()
@@ -113,6 +124,7 @@ def add_payment(user_id):
 # Get Payments for a User
 # -------------------------
 @bp.route('/users/<int:user_id>/payments', methods=['GET'])
+@jwt_required()
 def get_payments(user_id):
     user = User.query.get_or_404(user_id)
     payments = [{
@@ -128,6 +140,7 @@ def get_payments(user_id):
 # Add Contribution
 # -------------------------
 @bp.route('/users/<int:user_id>/contributions', methods=['POST'])
+@jwt_required()
 def add_contribution(user_id):
     user = User.query.get_or_404(user_id)
     data = request.get_json()
@@ -153,6 +166,7 @@ def add_contribution(user_id):
 # Get Contributions for a User
 # -------------------------
 @bp.route('/users/<int:user_id>/contributions', methods=['GET'])
+@jwt_required()
 def get_contributions(user_id):
     user = User.query.get_or_404(user_id)
     contributions = [{
@@ -167,6 +181,7 @@ def get_contributions(user_id):
 # Add or Update Monthly Contribution
 # -------------------------
 @bp.route('/users/<int:user_id>/monthly-contribution', methods=['POST'])
+@jwt_required()
 def add_or_update_monthly_contribution(user_id):
     user = User.query.get_or_404(user_id)
     data = request.get_json()
@@ -179,7 +194,6 @@ def add_or_update_monthly_contribution(user_id):
     year = now.year
     month = now.month
 
-    # Check for existing monthly contribution
     existing = Contribution.query.filter(
         Contribution.user_id == user.id,
         db.extract('year', Contribution.date) == year,
