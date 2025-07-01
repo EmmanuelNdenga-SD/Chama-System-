@@ -5,6 +5,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 bp = Blueprint('api', __name__, url_prefix='/api')
+@bp.route('/')
+def index():
+    return jsonify({
+        'status': 'OK',
+        'message': 'Chama System API is running'
+    }), 200
 
 # -------------------------
 # Register New User
