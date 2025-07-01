@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from .models import db, User, Payment, Contribution
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import text
 
 bp = Blueprint('api', __name__, url_prefix='/api')
 @bp.route('/')
@@ -221,3 +222,20 @@ def add_or_update_monthly_contribution(user_id):
 @bp.route('/test-cors', methods=['GET', 'OPTIONS'])
 def test_cors():
     return jsonify({"message": "CORS works!"}), 200
+
+@bp.route('/healthcheck', methods=['GET'])
+def healthcheck():
+    try:
+        # Test database connection - modern SQLAlchemy syntax
+        db.session.execute(text('SELECT 1'))
+        return jsonify({
+            'status': 'healthy',
+            'database': 'connected',
+            'timestamp': datetime.utcnow().isoformat()  # Use utcnow()
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'database': 'disconnected',
+            'error': str(e)
+        }), 500

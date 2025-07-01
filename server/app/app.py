@@ -9,6 +9,7 @@ from server.app.config import Config
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.run(debug=True)  # Enable debug mode for development
 
     db.init_app(app)
     Migrate(app, db)
