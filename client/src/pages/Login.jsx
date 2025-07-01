@@ -18,7 +18,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch('https://chama-system-5.onrender.com/api/login', {
+      const res = await fetch('https://chama-system.onrender.com/api/login', {  // ✅ updated URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
