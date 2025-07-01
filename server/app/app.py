@@ -15,14 +15,13 @@ def create_app():
 
     # ✅ CORS Fix — Allow local frontend and deployed frontend
     CORS(app, supports_credentials=True, resources={
-        r"/api/*": {
-            "origins": [
-                "http://localhost:5174",  # ✅ for local dev
-                "https://your-deployed-frontend-url.com"  # ✅ if deployed React app
-            ]
-        }
-    })
-
+    r"/api/*": {
+        "origins": [
+            "http://localhost:5174",
+            "https://chama-system.vercel.app"
+        ]
+    }
+})
     JWTManager(app)
     app.register_blueprint(bp)
 
