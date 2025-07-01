@@ -18,7 +18,8 @@ def create_app():
     r"/api/*": {
         "origins": [
             "http://localhost:5174",
-            "https://chama-system.vercel.app"
+            "https://chama-system.vercel.app",  # old
+            "https://chama-system-2ryw.vercel.app"  # ✅ your new frontend URL
         ]
     }
 })
