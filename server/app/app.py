@@ -17,9 +17,9 @@ def create_app():
     CORS(app, supports_credentials=True, resources={
     r"/api/*": {
         "origins": [
-            "http://localhost:5174",  # local dev
-            "https://chama-system.vercel.app",  # old deploy
-            "https://chama-system-2ryw.vercel.app"  # ✅ current deploy
+            "http://localhost:5174",
+            "https://chama-system-2ryw.vercel.app",
+            "https://chama-system.vercel.app"
         ]
     }
 })
