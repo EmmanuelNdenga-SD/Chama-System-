@@ -1,10 +1,10 @@
-from flask import Flask  # ✅ REQUIRED
+from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from .models import db
 from .routes import bp
-from server.app.config import Config  # ✅ Make sure this is correct
+from server.app.config import Config
 
 def create_app():
     app = Flask(__name__)
@@ -13,7 +13,15 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
 
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # ✅ CORS Fix — Allow local frontend and deployed frontend
+    CORS(app, supports_credentials=True, resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5174",  # ✅ for local dev
+                "https://your-deployed-frontend-url.com"  # ✅ if deployed React app
+            ]
+        }
+    })
 
     JWTManager(app)
     app.register_blueprint(bp)
