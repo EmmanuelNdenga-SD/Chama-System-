@@ -13,12 +13,12 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
 
-    # ✅ Proper CORS config to fix Vercel + Render + credentials
+    # ✅ Correct CORS setup (do NOT use "*" with supports_credentials=True)
     CORS(app, supports_credentials=True, resources={
         r"/api/*": {
             "origins": [
-                "http://localhost:5174",  # local frontend dev
-                "https://chama-system-2ryw.vercel.app"  # deployed frontend on vercel
+                "https://chama-system-2ryw.vercel.app",  # ✅ Your deployed frontend
+                "http://localhost:5174"  # ✅ Local dev frontend
             ]
         }
     })

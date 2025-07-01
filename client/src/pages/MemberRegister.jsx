@@ -27,15 +27,17 @@ export default function MemberRegister() {
 
     try {
       const res = await fetch('https://chama-system.onrender.com/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: form.username,
-          phone: form.phone,
-          password: form.password,
-          is_admin: false,
-        }),
-      });
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include', // ✅ FIX ADDED
+  body: JSON.stringify({
+    username: form.username,
+    phone: form.phone,
+    password: form.password,
+    is_admin: false,
+  }),
+});
+
 
       const data = await res.json();
       if (res.ok) {
