@@ -13,19 +13,16 @@ def create_app():
     db.init_app(app)
     Migrate(app, db)
 
-    # ✅ CORS Fix: Allow frontend (local + deployed) with full preflight config
+    # ✅ Proper CORS config to fix Vercel + Render + credentials
     CORS(app, supports_credentials=True, resources={
         r"/api/*": {
             "origins": [
-                "http://localhost:5174",
-                "https://chama-system-2ryw.vercel.app"
-            ],
-            "allow_headers": ["Content-Type", "Authorization"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+                "http://localhost:5174",  # local frontend dev
+                "https://chama-system-2ryw.vercel.app"  # deployed frontend on vercel
+            ]
         }
     })
 
     JWTManager(app)
     app.register_blueprint(bp)
-
     return app
