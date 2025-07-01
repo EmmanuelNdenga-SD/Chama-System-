@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from .models import db
 from .routes import bp  # <- your Blueprint
-from config import Config  # <- NOT from ..config
+from server.app.config import Config  # <- NOT from ..config
 
 def create_app():
     app = Flask(__name__)
