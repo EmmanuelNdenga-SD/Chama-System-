@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Box } from '@mui/material';
 
-export default function MemberLogin({ setMemberAuth }) {
+export default function MemberLogin({ setMemberAuthenticated }) {
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function MemberLogin({ setMemberAuth }) {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('member_token', data.access_token);
-        setMemberAuth(true);
+        setMemberAuthenticated(true);
         navigate('/contributions');
       } else {
         setError(data.error || 'Login failed');

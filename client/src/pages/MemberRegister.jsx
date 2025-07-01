@@ -4,37 +4,54 @@ import { Box, TextField, Typography, Button } from '@mui/material';
 export default function MemberRegister() {
   const [form, setForm] = useState({
     username: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const handleChange = e =>
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setMessage('');
+    setError('');
+  };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-      setMessage('Passwords do not match');
+      setError('Passwords do not match');
       return;
     }
 
     try {
-      const res = await fetch('https://chama-system-5.onrender.com/members/register', {
+      const res = await fetch('http://localhost:5000/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: form.username,
+          phone: form.phone,
           password: form.password,
+          is_admin: false,
         }),
       });
 
       const data = await res.json();
-      setMessage(res.ok ? 'Registration successful!' : data.error || 'Registration failed');
-    } catch (error) {
-      console.error('Registration error:', error);
-      setMessage('Server error. Please try again later.');
+      if (res.ok) {
+        setMessage('✅ Registration successful!');
+        setForm({
+          username: '',
+          phone: '',
+          password: '',
+          confirmPassword: '',
+        });
+      } else {
+        setError(data.error || 'Registration failed');
+      }
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError('Server error. Please try again later.');
     }
   };
 
@@ -50,6 +67,15 @@ export default function MemberRegister() {
           fullWidth
           margin="normal"
           value={form.username}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          label="Phone"
+          name="phone"
+          fullWidth
+          margin="normal"
+          value={form.phone}
           onChange={handleChange}
           required
         />
@@ -78,8 +104,13 @@ export default function MemberRegister() {
         </Button>
       </form>
       {message && (
-        <Typography color="secondary" sx={{ mt: 2 }}>
+        <Typography color="primary" sx={{ mt: 2 }}>
           {message}
+        </Typography>
+      )}
+      {error && (
+        <Typography color="error" sx={{ mt: 2 }}>
+          {error}
         </Typography>
       )}
     </Box>

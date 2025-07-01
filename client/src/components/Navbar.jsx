@@ -13,12 +13,12 @@ export default function Navbar({ isAuthenticated, isMemberAuthenticated, onLogou
 
         {/* Admin Navigation */}
         {isAuthenticated && (
-          <Box>
-            <Button color="inherit" component={Link} to="/payments">
-              Payments
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button color="inherit" component={Link} to="/admin/members">
+              Members
             </Button>
-            <Button color="inherit" component={Link} to="/add-member">
-              Add Member
+            <Button color="inherit" component={Link} to="/admin/contributions">
+              Add Contributions
             </Button>
           </Box>
         )}
@@ -26,11 +26,11 @@ export default function Navbar({ isAuthenticated, isMemberAuthenticated, onLogou
         {/* Member Navigation */}
         {isMemberAuthenticated && (
           <Button color="inherit" component={Link} to="/contributions">
-            Contributions
+            My Contributions
           </Button>
         )}
 
-        {/* Auth buttons */}
+        {/* Authentication Buttons */}
         {(isAuthenticated || isMemberAuthenticated) ? (
           <Button color="inherit" onClick={onLogout}>
             Logout
@@ -44,7 +44,7 @@ export default function Navbar({ isAuthenticated, isMemberAuthenticated, onLogou
               Member Login
             </Button>
             <Button color="inherit" component={Link} to="/member/register">
-              Register Member
+              Register
             </Button>
           </>
         )}

@@ -1,111 +1,68 @@
+// src/pages/Login.jsx
 import { useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Avatar,
-  CssBaseline,
-} from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Box, TextField, Button, Typography } from '@mui/material';
 
 export default function Login({ setIsAuthenticated }) {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [message, setMessage] = useState('');
+  const [form, setForm] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
+    setError('');
+
     try {
-      const response = await axios.post('http://localhost:5000/login', credentials);
-      localStorage.setItem('token', response.data.access_token);
+      const res = await axios.post('http://localhost:5000/api/login', form);
+
+      // Check if user is admin
+      if (!res.data.user.is_admin) {
+        setError('Access denied. Not an admin.');
+        return;
+      }
+
+      // Optionally store token if you’re using JWT in the future
+      // localStorage.setItem('token', res.data.access_token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       setIsAuthenticated(true);
-      setMessage('Login successful!');
-      setTimeout(() => navigate('/payments'), 1500);
-    } catch (error) {
-      setMessage('Invalid credentials');
+      navigate('/admin/contributions');
+    } catch (err) {
+      console.error(err.response?.data || err.message);
+      setError('Invalid credentials');
     }
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(to bottom right, #e0e7ff, #f8fafc)',
-        py: 4,
-      }}
-    >
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Paper
-          elevation={4}
-          sx={{
-            p: { xs: 3, sm: 4 },
-            borderRadius: 3,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
-            Chama Admin Login
-          </Typography>
-
-          {message && (
-            <Typography
-              variant="body2"
-              color={message === 'Login successful!' ? 'success.main' : 'error.main'}
-              sx={{ mb: 2 }}
-            >
-              {message}
-            </Typography>
-          )}
-
-          <Box component="form" onSubmit={handleLogin} sx={{ mt: 1, width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Username"
-              name="username"
-              value={credentials.username}
-              onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Password"
-              name="password"
-              type="password"
-              value={credentials.password}
-              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              sx={{ mt: 3, py: 1.4 }}
-            >
-              Sign In
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
+    <Box maxWidth={400} mx="auto" mt={5}>
+      <Typography variant="h5" mb={2}>Admin Login</Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      <form onSubmit={handleSubmit}>
+        <TextField
+          fullWidth
+          label="Username"
+          name="username"
+          value={form.username}
+          onChange={handleChange}
+          margin="normal"
+        />
+        <TextField
+          fullWidth
+          label="Password"
+          name="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+          margin="normal"
+        />
+        <Button variant="contained" color="primary" type="submit" fullWidth sx={{ mt: 2 }}>
+          Login
+        </Button>
+      </form>
     </Box>
   );
 }

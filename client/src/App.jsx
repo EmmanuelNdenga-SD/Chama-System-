@@ -5,32 +5,21 @@ import Login from './pages/Login';
 import MemberLogin from './pages/MemberLogin';
 import MemberRegister from './pages/MemberRegister';
 import Contributions from './pages/Contributions';
-import Payments from './pages/Payments';
-import AddMember from './pages/AddMember';
+import AddContribution from './pages/AddContribution';
+import AdminMembers from './pages/AdminMembers';
 import Navbar from './components/Navbar';
 import { Box, Typography, CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-// Define custom MUI theme
 const theme = createTheme({
   palette: {
     mode: 'light',
-    primary: {
-      main: '#2E5BFF',
-    },
-    secondary: {
-      main: '#00C292',
-    },
-    background: {
-      default: '#f2f6fc',
-    },
+    primary: { main: '#2E5BFF' },
+    secondary: { main: '#00C292' },
+    background: { default: '#f2f6fc' },
   },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-  shape: {
-    borderRadius: 8,
-  },
+  typography: { fontFamily: 'Roboto, sans-serif' },
+  shape: { borderRadius: 8 },
 });
 
 export default function App() {
@@ -65,20 +54,29 @@ export default function App() {
           backgroundAttachment: 'fixed',
         }}
       >
-        {/* Navbar */}
         <Navbar
           isAuthenticated={isAuthenticated}
           isMemberAuthenticated={isMemberAuthenticated}
           onLogout={handleLogout}
         />
 
-        {/* Page Content */}
         <Box sx={{ flex: 1, px: 2, py: 4 }}>
           <Routes>
+            {/* Public */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-            <Route path="/member/login" element={<MemberLogin setMemberAuthenticated={setMemberAuthenticated} />} />
+
+            {/* Auth */}
+            <Route
+              path="/login"
+              element={<Login setIsAuthenticated={setIsAuthenticated} />}
+            />
+            <Route
+              path="/member/login"
+              element={<MemberLogin setMemberAuthenticated={setMemberAuthenticated} />}
+            />
             <Route path="/member/register" element={<MemberRegister />} />
+
+            {/* Member Route */}
             <Route
               path="/contributions"
               element={
@@ -89,13 +87,37 @@ export default function App() {
                 )
               }
             />
+
+            {/* Admin Routes */}
             <Route
-              path="/payments"
-              element={isAuthenticated ? <Payments /> : <Login setIsAuthenticated={setIsAuthenticated} />}
+              path="/admin/contributions"
+              element={
+                isAuthenticated ? (
+                  <AddContribution />
+                ) : (
+                  <Login setIsAuthenticated={setIsAuthenticated} />
+                )
+              }
             />
             <Route
-              path="/add-member"
-              element={isAuthenticated ? <AddMember /> : <Login setIsAuthenticated={setIsAuthenticated} />}
+              path="/admin/members"
+              element={
+                isAuthenticated ? (
+                  <AdminMembers />
+                ) : (
+                  <Login setIsAuthenticated={setIsAuthenticated} />
+                )
+              }
+            />
+
+            {/* 404 */}
+            <Route
+              path="*"
+              element={
+                <Box textAlign="center" mt={5}>
+                  <Typography variant="h5">404 - Page Not Found</Typography>
+                </Box>
+              }
             />
           </Routes>
         </Box>
