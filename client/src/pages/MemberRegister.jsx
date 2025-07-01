@@ -26,10 +26,10 @@ export default function MemberRegister() {
     }
 
     try {
-      const res = await fetch('https://chama-system.onrender.com/api/users', {
+      const res = await fetch('https://chama-system.onrender.com/api/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  credentials: 'include', // ✅ FIX ADDED
+  credentials: 'include', // ✅ Required with cookies or JWT auth
   body: JSON.stringify({
     username: form.username,
     phone: form.phone,
